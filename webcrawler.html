@@ -1,0 +1,368 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head> 
+		<title>A simple Web Crawler</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="Single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="index.html">Kyra's Wonderland</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="about.html">About Me</a></li>
+								<li><a href="compsci.html">Computer Science</a></li>
+								<li><a href="#Life">Life</a></li>
+								<li><a href="#Thoughts">Thoughts</a></li>
+								<li><a href="#Contact">Contact</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="search">
+									<a class="fa-search" href="#search">Search</a>
+									<form id="search" method="get" action="#">
+										<input type="text" name="query" placeholder="Search" />
+									</form>
+								</li>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+					<section id="menu">
+
+						<!-- Search -->
+							<section>
+								<form class="search" method="get" action="#">
+									<input type="text" name="query" placeholder="Search" />
+								</form>
+							</section>
+
+						<!-- Links -->
+                        <section>
+                            <ul class="links">
+                                <li>
+                                    <a href="about.html">
+                                        <h3>About Me</h3>
+                                        <p>A brief self-introduction!</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="compsci.html">
+                                        <h3>Computer Science</h3>
+                                        <p>Lots of love, lots of unknown</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#Life">
+                                        <h3>Life</h3>
+                                        <p>Enjoy life, sunshire and nature</p>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#Thoughts">
+                                        <h3>Thoughts</h3>
+                                        <p>Psychology? Maybe or maybe not</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </section>
+
+						
+					</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">A Simple Web Crawler</a></h2>
+										<p>A simple web crawler using HTML link tags, with Breadth-First Search Implemented.</p>
+									</div>
+									<div class="meta">
+										<time class="published" datetime="2015-11-01">November 1, 2020</time>
+										<a href="#" class="author"><span class="name">Kyra ZHOU</span><img src="images/life/about.JPG" alt="" /></a>
+									</div>
+								</header>
+								<span class="image featured"><img src="images/compsci/webCrawler/friend-link.png" alt="Web Crawler program cover" /></span>
+                                <h1 id="web-crawler-basic">How can I access to the program?</h1>
+                                <a href="https://github.com/KyraZzz/Web-Crawler-Basic" target="_blank">Direct me to Github!</a>
+                                <br><br>
+<h1 id="idea-">Idea:</h1>
+<p>Each website has various other websites linked to it and each one also links to some local or external websites. Visually speaking, it looks like a graph of <strong>nodes</strong> and <strong>arcs</strong>, where nodes represent the distinguish websites and arcs represent the link or relationship between two websites.</p>
+<p>We can use a <code>Breadth-First Search(BFS)</code> to search through the graph. BFS means for each node, we will go through all its child nodes before reaching the next level. Commonly, BFS is implemented by a queue and I have used a <code>deque</code> data structure in Python for implementation.</p>
+<h1 id="step-by-step-intro-">Step-by-step intro:</h1>
+<pre><code class="lang-python"># Reference: https:<span class="hljs-comment">//www.freecodecamp.org/news/how-to-build-a-url-crawler-to-map-a-website-using-python-6a287be1da11/</span>
+# Reference: https:<span class="hljs-comment">//pythonprogramming.net/introduction-scraping-parsing-beautiful-soup-tutorial/</span>
+# External libraries used: BeautifulSoup, requests, urllib.
+<span class="hljs-keyword">from</span> bs4 <span class="hljs-keyword">import</span> BeautifulSoup
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">from</span> urllib.parse <span class="hljs-keyword">import</span> urlsplit
+</code></pre>
+<p>In this program, the external library we used are:</p>
+<ul>
+<li>BeautifulSoup: parse the HTML file fetched from the url with the help of <code>lxml</code> parser</li>
+<li>requests: Check for broken urls using <code>requests.exceptions</code> module and fetch response</li>
+<li>urllib: open url and split the url into parts</li>
+</ul>
+<pre><code class="lang-python">from collections <span class="hljs-built_in">import</span> deque
+
+<span class="hljs-attr">ini_url</span> = <span class="hljs-string">"https://news.ycombinator.com/"</span>
+
+<span class="hljs-comment"># A queue of the unvisited urls</span>
+<span class="hljs-attr">url_q</span> = deque([ini_url])
+</code></pre>
+<p>I used a <code>deque</code> data structure to implement a queue which will store the urls that are waited to be visited. We first enqueue the initial url.</p>
+<pre><code class="lang-python"><span class="hljs-comment"># Sets of visited, unvisited and broken urls</span>
+<span class="hljs-attr">vis_url</span> = set()
+<span class="hljs-attr">child_url</span> = set()
+<span class="hljs-attr">broken_url</span> = set()
+</code></pre>
+<p>Set up three sets to store urls in different statuses, we use set because we do not want to visit the same url twice:</p>
+<ul>
+<li><code>vis_url</code>: the visited url set, once we have visited 100 urls, we will halt the program.</li>
+<li><code>child_url</code>: a temporary set stores the children of a particular url </li>
+<li><code>broken_url</code>: the url which is broken and has been caught by the <code>request.exceptions</code> module.</li>
+</ul>
+<pre><code class="lang-python"><span class="hljs-comment"># Start BFS the queue</span>
+<span class="hljs-keyword">while</span> <span class="hljs-built_in">len</span>(url_q) <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(vis_url) &lt; <span class="hljs-number">100</span>:
+    url = url_q.popleft()
+    vis_url.<span class="hljs-built_in">add</span>(url)
+    child_url = <span class="hljs-built_in">set</span>()
+    print(<span class="hljs-string">"Processing url {}: {}"</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">len</span>(vis_url), url))
+    ...
+</code></pre>
+<p>We start doing the BFS operations on the queue by pop the front item of the queue and add it into the visited set <code>vis_url</code>, this item is the url we are going to work on. In order to improve the efficiency of the codes, we will empty the <code>child_url</code> set whenever we are operating on a new url.</p>
+<pre><code class="lang-python">    ...
+    # An <span class="hljs-keyword">try</span>-except code block <span class="hljs-keyword">to</span> <span class="hljs-keyword">catch</span> <span class="hljs-keyword">all</span> the broken urls
+    <span class="hljs-keyword">try</span>:
+        response = requests.<span class="hljs-built_in">get</span>(url)
+    except(requests.exceptions.MissingSchema, requests.exceptions.ConnectionError, requests.exceptions.InvalidURL, requests.exceptions.InvalidSchema):
+        broken_url.<span class="hljs-built_in">add</span>(url)
+        <span class="hljs-keyword">print</span>(<span class="hljs-string">"Warning: A broken url"</span>)
+        <span class="hljs-keyword">continue</span>
+    ...
+</code></pre>
+<p>This is a <code>try-except</code> block to catch the broken urls, in this way, when we are processing the urls, <code>BeautifulSoup</code> will be notified and will stop processing the broken urls.</p>
+<pre><code class="lang-python">    ...
+    # A url has parts: scheme(protocols) + domain_name + file_path
+    # SplitResult(scheme=<span class="hljs-string">'https'</span>, netloc=<span class="hljs-string">'news.ycombinator.com'</span>, path=<span class="hljs-string">'/'</span>, query=<span class="hljs-string">''</span>, fragment=<span class="hljs-string">''</span>)
+    parts = urlsplit(url)
+
+    # Get the domain name
+    domain = parts.netloc
+    # Make sure the subdomain is stripped off
+    strip_domain = domain.replace(<span class="hljs-string">"www."</span>, <span class="hljs-string">""</span>)
+    # base_url: https:<span class="hljs-comment">//news.ycombinator.com</span>
+    base_url = <span class="hljs-string">"{}://{}"</span>.format(parts.scheme, parts.netloc)
+
+    # path: https:<span class="hljs-comment">//news.ycombinator.com/</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-string">'/'</span> <span class="hljs-keyword">in</span> parts.path:
+        path = url[:url.rfind(<span class="hljs-string">'/'</span>)+<span class="hljs-number">1</span>]
+    else:
+        path = url
+    ...
+</code></pre>
+<p>This block of code splits the url into various parts, the part we are interested in is the domain of the url. We also set up the <code>strip_domain</code> and <code>base_url</code> for later use when formatting the child urls.</p>
+<pre><code class="lang-python">    ...
+    # Initialise BeautifulSoup <span class="hljs-keyword">to</span> <span class="hljs-keyword">process</span> the HTML document
+    # <span class="hljs-keyword">if</span> the response <span class="hljs-keyword">is</span> an <span class="hljs-literal">error</span> message, BS will <span class="hljs-keyword">not</span> attempt <span class="hljs-keyword">to</span> <span class="hljs-keyword">open</span> it
+    soup = BeautifulSoup(response.<span class="hljs-literal">text</span>, <span class="hljs-string">"lxml"</span>)
+    ...
+</code></pre>
+<p><code>BeautifulSoup</code> is initialised to process the HTML document, we utilise the response message from the <code>try-catch</code> block to make sure the broken urls are not been processed.</p>
+<pre><code class="lang-python">    ...
+    <span class="hljs-comment"># Iterate through each anchor found in the HTML document</span>
+    <span class="hljs-comment"># link example: &lt;a href=""&gt;text&lt;/a&gt;</span>
+    <span class="hljs-keyword">for</span> link <span class="hljs-keyword">in</span> soup.find_all('a'):
+        <span class="hljs-comment"># set anchor as the href attribute in the tag</span>
+        if <span class="hljs-string">"href"</span> <span class="hljs-keyword">in</span> link.attrs:
+            <span class="hljs-built_in">anchor</span> = link.attrs[<span class="hljs-string">"href"</span>]
+        else:
+            <span class="hljs-built_in">anchor</span> = <span class="hljs-string">""</span>
+        <span class="hljs-comment"># form a url using anchor and the following conditions</span>
+        if <span class="hljs-built_in">anchor</span>.startswith('/'):
+            <span class="hljs-comment"># a url points to a file within the website</span>
+            new_url = base_url + <span class="hljs-built_in">anchor</span>
+            child_url.add(new_url)
+        elif strip_domain <span class="hljs-keyword">in</span> <span class="hljs-built_in">anchor</span>:
+            <span class="hljs-comment"># if the anchor contains the url, then it is a local url</span>
+            child_url.add(<span class="hljs-built_in">anchor</span>)
+        elif not <span class="hljs-built_in">anchor</span>.startswith('http'):
+            <span class="hljs-comment"># not a foreign link</span>
+            new_url = path + <span class="hljs-built_in">anchor</span>
+            child_url.add(new_url)
+        else:
+            <span class="hljs-comment"># a foreign link</span>
+            child_url.add(<span class="hljs-built_in">anchor</span>)
+    ...
+</code></pre>
+<p>We iterate through all the children of the current url and form a fully qualified url based on their conditions.</p>
+<pre><code class="lang-python">    ...
+    <span class="hljs-keyword">for</span> link <span class="hljs-keyword">in</span> child_url:
+        # <span class="hljs-keyword">if</span> we have <span class="hljs-keyword">not</span> visited <span class="hljs-keyword">and</span> added the link <span class="hljs-keyword">to</span> the queue, <span class="hljs-keyword">then</span> <span class="hljs-keyword">add</span> the link <span class="hljs-keyword">to</span> the queue
+        <span class="hljs-keyword">if</span> (link <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> url_q) <span class="hljs-keyword">and</span> (link <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> vis_url):
+            url_q.append(link)
+    ...
+</code></pre>
+<p>For each link in the <code>child_url</code>, make sure none of them has been visited before and none of them is currently in the queue. This helps us to avoid having infinite loops in the program.</p>
+<pre><code class="lang-python">print(<span class="hljs-string">"Visited {} urls, Simple Web Crawler Job done!"</span>.format(<span class="hljs-name">len</span>(<span class="hljs-name">vis_url</span>)))
+</code></pre>
+<p>Print the statement to inform the users that the job is done.</p>
+<h1 id="result-of-this-example-">Result of this example:</h1>
+<pre><code class="lang-python">Processing url <span class="hljs-number">1</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/
+Processing url <span class="hljs-number">2</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/jobs
+Processing url <span class="hljs-number">3</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=schedutron
+Processing url <span class="hljs-number">4</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/bookmarklet.html
+Processing url <span class="hljs-number">5</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=onlywei.github.io
+Processing url <span class="hljs-number">6</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=x86.<span class="hljs-keyword">lol</span>
+Processing url <span class="hljs-number">7</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24959519</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">8</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24950018</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">9</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">10</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24960948</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">11</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24958504</span>
+Processing url <span class="hljs-number">12</span>: http<span class="hljs-variable">s:</span>//github.<span class="hljs-keyword">com</span>/HackerNews/API
+Processing url <span class="hljs-number">13</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=nanomonkey
+Processing url <span class="hljs-number">14</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=jwmhjwmh
+Processing url <span class="hljs-number">15</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24959947</span>
+Processing url <span class="hljs-number">16</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24961342</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">17</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=streetwriters.<span class="hljs-keyword">co</span>
+Processing url <span class="hljs-number">18</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24959588</span>
+Processing url <span class="hljs-number">19</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/newcomments
+Processing url <span class="hljs-number">20</span>: http<span class="hljs-variable">s:</span>//www.nngroup.<span class="hljs-keyword">com</span>/articles/ux-gains-shrinking/
+Processing url <span class="hljs-number">21</span>: http<span class="hljs-variable">s:</span>//gist.github.<span class="hljs-keyword">com</span>/erincandescent/<span class="hljs-number">8</span>a10eeeea1918ee4f9d9982f7618ef68
+Processing url <span class="hljs-number">22</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24957783</span>
+Processing url <span class="hljs-number">23</span>: http<span class="hljs-variable">s:</span>//science.sciencemag.org/content/<span class="hljs-number">370</span>/<span class="hljs-number">6516</span>/<span class="hljs-number">530</span>
+Processing url <span class="hljs-number">24</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=cwaffles
+Processing url <span class="hljs-number">25</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=krizhanovsky
+Processing url <span class="hljs-number">26</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24957727</span>
+Processing url <span class="hljs-number">27</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/security.html
+Processing url <span class="hljs-number">28</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=quyleanh
+Processing url <span class="hljs-number">29</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24950777</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">30</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24950777</span>
+Processing url <span class="hljs-number">31</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24960108</span>
+Processing url <span class="hljs-number">32</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24958725</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">33</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24960994</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">34</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=the-scientist.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">35</span>: http<span class="hljs-variable">s:</span>//github.<span class="hljs-keyword">com</span>/mitmproxy/mitmproxy/releases/<span class="hljs-keyword">tag</span>/v5.<span class="hljs-number">3.0</span>
+Processing url <span class="hljs-number">36</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=eclecticlight.<span class="hljs-keyword">co</span>
+Processing url <span class="hljs-number">37</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24958558</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">38</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24949335</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">39</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24949542</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">40</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=ingve
+Processing url <span class="hljs-number">41</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24959897</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">42</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=eitland
+Processing url <span class="hljs-number">43</span>: http<span class="hljs-variable">s:</span>//blog.streetwriters.<span class="hljs-keyword">co</span>/overcoming-writers-block/
+Processing url <span class="hljs-number">44</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24957280</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">45</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=panda17
+Processing url <span class="hljs-number">46</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24949736</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">47</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=reddotX
+Processing url <span class="hljs-number">48</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=probablydance.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">49</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=benkoller
+Processing url <span class="hljs-number">50</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=orwellfoundation.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">51</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24958392</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">52</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=XzetaU8
+Processing url <span class="hljs-number">53</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24957727</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">54</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=electrospaces.net
+Processing url <span class="hljs-number">55</span>: http<span class="hljs-variable">s:</span>//netflixtechblog.<span class="hljs-keyword">com</span>/netflix-android-<span class="hljs-built_in">and</span>-ios-studio-apps-kotlin-multiplatform-d6d4d8d25d23
+Processing url <span class="hljs-number">56</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/newsfaq.html
+Processing url <span class="hljs-number">57</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/login?<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">58</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=maiot.io
+Processing url <span class="hljs-number">59</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24959238</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">60</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24949335</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">61</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/submit
+Processing url <span class="hljs-number">62</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=netflixtechblog.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">63</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=wisc.edu
+Processing url <span class="hljs-number">64</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24959408</span>
+Processing url <span class="hljs-number">65</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24961253</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">66</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24957280</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">67</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=nngroup.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">68</span>: http<span class="hljs-variable">s:</span>//www.atlasobscura.<span class="hljs-keyword">com</span>/articles/peoples-linguistic-survey-of-india-ganesh-devy
+Processing url <span class="hljs-number">69</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24958504</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">70</span>: http<span class="hljs-variable">s:</span>//x86.<span class="hljs-keyword">lol</span>/generic/<span class="hljs-number">2020</span>/<span class="hljs-number">10</span>/<span class="hljs-number">30</span>/complexity-in-operating-systems.html
+Processing url <span class="hljs-number">71</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=wired.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">72</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24961028</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">73</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=pine64.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">74</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24957783</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">75</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24958725</span>
+Processing url <span class="hljs-number">76</span>: http<span class="hljs-variable">s:</span>//blog.maiot.io/<span class="hljs-number">12</span>-factors-of-ml-in-production/
+Processing url <span class="hljs-number">77</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24960772</span>
+Processing url <span class="hljs-number">78</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24949736</span>
+Processing url <span class="hljs-number">79</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/item?id=<span class="hljs-number">24949983</span>
+Processing url <span class="hljs-number">80</span>: http<span class="hljs-variable">s:</span>//api.peervadoo.<span class="hljs-keyword">com</span>/test
+Processing url <span class="hljs-number">81</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/lists
+Processing url <span class="hljs-number">82</span>: http<span class="hljs-variable">s:</span>//www.orwellfoundation.<span class="hljs-keyword">com</span>/the-orwell-foundation/orwell/essays-<span class="hljs-built_in">and</span>-other-works/looking-back-<span class="hljs-keyword">on</span>-the-spanish-war/
+Processing url <span class="hljs-number">83</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24959090</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">84</span>: http<span class="hljs-variable">s:</span>//eclecticlight.<span class="hljs-keyword">co</span>/<span class="hljs-number">2020</span>/<span class="hljs-number">09</span>/<span class="hljs-number">16</span>/boot-volume-layout/
+Processing url <span class="hljs-number">85</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24959408</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">86</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24960108</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">87</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24958725</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">88</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=dsego
+Processing url <span class="hljs-number">89</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24961253</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">90</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24958423</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">91</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=gist.github.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">92</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/vote?id=<span class="hljs-number">24950777</span>&amp;how=<span class="hljs-keyword">up</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">93</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=thecodrr
+Processing url <span class="hljs-number">94</span>: http<span class="hljs-variable">s:</span>//www.workatastartup.<span class="hljs-keyword">com</span>/companies/<span class="hljs-number">21800</span>
+Processing url <span class="hljs-number">95</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/<span class="hljs-keyword">hide</span>?id=<span class="hljs-number">24958423</span>&amp;<span class="hljs-keyword">goto</span>=news
+Processing url <span class="hljs-number">96</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=vulpesx2
+Processing url <span class="hljs-number">97</span>: http<span class="hljs-variable">s:</span>//github.<span class="hljs-keyword">com</span>/sepfy/piipcam
+Processing url <span class="hljs-number">98</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/from?site=peervadoo.<span class="hljs-keyword">com</span>
+Processing url <span class="hljs-number">99</span>: http://www.ycombinator.<span class="hljs-keyword">com</span>/legal/
+Processing url <span class="hljs-number">100</span>: http<span class="hljs-variable">s:</span>//news.ycombinator.<span class="hljs-keyword">com</span>/user?id=ducktective
+Visited <span class="hljs-number">100</span> urls, Simple Web Crawler Job done!
+</code></pre>
+
+                                    
+        
+                                <footer>
+									<ul class="stats">
+										<li><a href="#">General</a></li>
+										<li><a href="#" class="icon solid fa-heart">28</a></li>
+										<li><a href="#" class="icon solid fa-comment">128</a></li>
+									</ul>
+								</footer>
+							</article>
+
+					</div>
+
+				<!-- Footer -->
+					<section id="footer">
+						<ul class="icons">
+							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+							<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
+							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
+						</ul>
+						<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
