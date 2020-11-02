@@ -106,8 +106,8 @@
                                 <a href="https://github.com/KyraZzz/Web-Crawler-Basic" target="_blank">Direct me to Github!</a>
                                 <br><br>
 <h1 id="idea-">Idea:</h1>
-<p>Each website has various other websites linked to it and each one also links to some local or external websites. Visually speaking, it looks like a graph of <strong>nodes</strong> and <strong>arcs</strong>, where nodes represent the distinguish websites and arcs represent the link or relationship between two websites.</p>
-<p>We can use a <code>Breadth-First Search(BFS)</code> to search through the graph. BFS means for each node, we will go through all its child nodes before reaching the next level. Commonly, BFS is implemented by a queue and I have used a <code>deque</code> data structure in Python for implementation.</p>
+<p>Each website has various other websites linked to it and each one also links to some local or external websites. Visually speaking, it looks like a graph of <strong>nodes</strong> and <strong>arcs</strong>, where nodes represent the websites and arcs represent the link or relationship between two websites.</p>
+<p>We can use a <code>Breadth-First Search(BFS)</code> to search through the graph. BFS means for each node, we will go through all its child nodes before reaching the next level. BFS is commonly implemented by a queue and I have used a <code>deque</code> data structure in Python for implementation.</p>
 <h1 id="step-by-step-intro-">Step-by-step intro:</h1>
 <pre><code class="lang-python"># Reference: https:<span class="hljs-comment">//www.freecodecamp.org/news/how-to-build-a-url-crawler-to-map-a-website-using-python-6a287be1da11/</span>
 # Reference: https:<span class="hljs-comment">//pythonprogramming.net/introduction-scraping-parsing-beautiful-soup-tutorial/</span>
@@ -149,7 +149,7 @@
     print(<span class="hljs-string">"Processing url {}: {}"</span>.<span class="hljs-built_in">format</span>(<span class="hljs-built_in">len</span>(vis_url), url))
     ...
 </code></pre>
-<p>We start doing the BFS operations on the queue by pop the front item of the queue and add it into the visited set <code>vis_url</code>, this item is the url we are going to work on. In order to improve the efficiency of the codes, we will empty the <code>child_url</code> set whenever we are operating on a new url.</p>
+<p>We start doing the BFS operations on the queue by popping the front item of the queue and adding it into the visited set <code>vis_url</code>, this item is the url we are going to work on. In order to improve the efficiency of the codes, we will empty the <code>child_url</code> set whenever we are operating on a new url.</p>
 <pre><code class="lang-python">    ...
     # An <span class="hljs-keyword">try</span>-except code block <span class="hljs-keyword">to</span> <span class="hljs-keyword">catch</span> <span class="hljs-keyword">all</span> the broken urls
     <span class="hljs-keyword">try</span>:
